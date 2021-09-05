@@ -15,29 +15,36 @@ app.get("/", (req, res) => {
 	res.send(data);
 });
 
+// app.get("/users/:id", (req, res) =>{
+//     const id = req.params.id;
+// });
+
 app.post("/signin", (req, res) => {
-	if (data == []) {
+	if (data.length === 0) {
 		res.json({
 			msg: "First create a user",
 			code: false,
 		});
 	} else {
-		let idx = data.filter((e) => e.mail == req.body.mail);
-		if (idx) {
-			if (idx[0].pwd === req.body.pwd) {
-				res.json({
-					id: idx[0].id,
-					name: idx[0].name,
-					mail: idx[0].mail,
-					msg: "Log in success",
-					code: true,
-				});
-			}
-		} else {
+		let idx = data.filter((e) => e.mail === req.body.mail);
+		if (idx.length === 0) {
 			res.json({
 				msg: "Username / Password is wrong",
 				code: false,
 			});
+		} else {
+			if (idx[0].pwd === req.body.pwd) {
+				res.json({
+					user: idx[0],
+					msg: "Successfully logged in",
+					code: true,
+				});
+			} else {
+				res.json({
+					msg: "Username / Password is wrong",
+					code: false,
+				});
+			}
 		}
 	}
 });
@@ -49,21 +56,48 @@ app.post("/register", (req, res) => {
 			code: false,
 		});
 	} else {
-		req.body.id = data.length + 1;
 		data.push(req.body);
 		res.json({
-			id: req.body.id,
 			msg: "User created successfully",
 			code: true,
 		});
 	}
 });
 
-app.get("/logout", (req, res) => {
-	res.json({
-		msg: "Logged out successfully",
-	});
+app.put("/forgot", (req, res) => {
+	if (data.length === 0) {
+		res.json({
+			msg: "First create a user",
+			code: false,
+		});
+	} else {
+		let i = data.findIndex((e) => e.mail === req.body.mail);
+		if (i < 0) {
+			res.json({
+				msg: "Username / Password is wrong",
+				code: false,
+			});
+		} else {
+			if (data[i].pwd = req.body.pwd) {
+				res.json({
+					msg: "Password changed succesfully",
+					code: true,
+				});
+			} else {
+				res.json({
+					msg: "Username / Password is wrong",
+					code: false,
+				});
+			}
+		}
+	}
 });
+
+// app.get("/logout", (req, res) => {
+// 	res.json({
+// 		msg: "Logged out successfully",
+// 	});
+// });
 
 app.listen(3500, () => {
 	console.log("The Server is listening in port : 3500");
